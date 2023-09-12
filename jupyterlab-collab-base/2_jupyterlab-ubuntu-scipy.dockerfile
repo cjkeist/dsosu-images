@@ -1,4 +1,4 @@
-FROM jupyterlab-ubuntu-base as jupyterlab-ubuntu-base-scipy
+FROM jupyterlab-ubuntu-collab-base as jupyterlab-ubuntu-base-collab-scipy
 
 ############################################################################
 ################# Dependency: jupyter/scipy-notebook #######################

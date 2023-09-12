@@ -1,8 +1,8 @@
-# TARGET jupyterlab-ubuntu-base v1.1.0-dev
-# TARGET jupyterlab-ubuntu-base-scipy v1.1.0-dev
-# TARGET jupyterlab-ubuntu-base-scipy-rjulia v1.1.0-dev
+# TARGET jupyterlab-ubuntu-collab-base v1.1.0-dev
+# TARGET jupyterlab-ubuntu-base-collab-scipy v1.1.0-dev
+# TARGET jupyterlab-ubuntu-base-collab-scipy-rjulia v1.1.0-dev
 
-# 1.1.0-dev: Adding in tree and cmake, updating JH and JL, Python and R
+# 1.1.0-dev: Adding in tree and cmake, updating JH and JL, Python and R, added collaboration feature
 # 1.0.5: Adding r-tidyverse
 # 1.0.4: Adding in following libraries: libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
 # 1.0.3: Stable build

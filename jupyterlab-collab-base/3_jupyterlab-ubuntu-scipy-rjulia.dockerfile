@@ -1,4 +1,4 @@
-FROM jupyterlab-ubuntu-base-scipy as jupyterlab-ubuntu-base-scipy-rjulia
+FROM jupyterlab-ubuntu-base-collab-scipy as jupyterlab-ubuntu-base-collab-scipy-rjulia
 ############################################################################
 ################ Dependency: jupyter/datascience-notebook ##################
 ############################################################################

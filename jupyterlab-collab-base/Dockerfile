@@ -1,8 +1,8 @@
-# TARGET jupyterlab-ubuntu-base v1.1.0-dev
-# TARGET jupyterlab-ubuntu-base-scipy v1.1.0-dev
-# TARGET jupyterlab-ubuntu-base-scipy-rjulia v1.1.0-dev
+# TARGET jupyterlab-ubuntu-collab-base v1.1.0-dev
+# TARGET jupyterlab-ubuntu-base-collab-scipy v1.1.0-dev
+# TARGET jupyterlab-ubuntu-base-collab-scipy-rjulia v1.1.0-dev
 
-# 1.1.0-dev: Adding in tree and cmake, updating JH and JL, Python and R
+# 1.1.0-dev: Adding in tree and cmake, updating JH and JL, Python and R, added collaboration feature
 # 1.0.5: Adding r-tidyverse
 # 1.0.4: Adding in following libraries: libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
 # 1.0.3: Stable build
@@ -13,7 +13,7 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 ARG ROOT_CONTAINER=ubuntu:latest
-FROM $ROOT_CONTAINER as jupyterlab-ubuntu-base
+FROM $ROOT_CONTAINER as jupyterlab-ubuntu-collab-base
 ############################################################################
 #################### Dependency: jupyter/base-image ########################
 ############################################################################
@@ -198,6 +198,7 @@ RUN mamba install --yes \
     'jupyterlab' \
     'notebook' \
     'jupyterhub' \
+    'jupyter-collaboration' \
     'jupyter-resource-usage' \
     'nbclassic' && \
     jupyter server --generate-config && \
@@ -242,7 +243,7 @@ HEALTHCHECK --interval=5s --timeout=3s --start-period=5s --retries=3 \
 USER root
 
 WORKDIR "${HOME}"
-FROM jupyterlab-ubuntu-base as jupyterlab-ubuntu-base-scipy
+FROM jupyterlab-ubuntu-collab-base as jupyterlab-ubuntu-base-collab-scipy
 
 ############################################################################
 ################# Dependency: jupyter/scipy-notebook #######################
@@ -339,7 +340,7 @@ COPY setup-scripts/ /opt/setup-scripts/
 # changelog:
 # 1.1.1: upgrade sudo to address root exploit https://ubuntu.com/security/notices/USN-4705-1
 
-FROM jupyterlab-ubuntu-base-scipy as jupyterlab-ubuntu-base-scipy-rjulia
+FROM jupyterlab-ubuntu-base-collab-scipy as jupyterlab-ubuntu-base-collab-scipy-rjulia
 ############################################################################
 ################ Dependency: jupyter/datascience-notebook ##################
 ############################################################################
