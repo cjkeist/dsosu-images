@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-addgroup --gid 101 dsadmins
+addgroup --gid 102 dsadmins
 adduser --no-create-home --uid 1001 --gid 101 --disabled-password --disabled-login --gecos "" dsadmin
 
 export_base="/nfsshare/"

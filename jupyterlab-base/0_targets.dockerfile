@@ -1,7 +1,11 @@
-# TARGET jupyterlab-ubuntu-base v1.1.0-dev
-# TARGET jupyterlab-ubuntu-base-scipy v1.1.0-dev
-# TARGET jupyterlab-ubuntu-base-scipy-rjulia v1.1.0-dev
+# TARGET jupyterlab-ubuntu-base v1.1.4-dev
+# TARGET jupyterlab-ubuntu-base-scipy v1.1.4-dev
+# TARGET jupyterlab-ubuntu-base-scipy-rjulia v1.1.4-dev
 
+# 1.1.4-dev: Adding in  zlib1g-dev  default-jre  default-jdk  dnsutils  libssl-dev  libbz2-dev  libncurses5-dev  liblzma-dev libcurl-dev
+# 1.1.3-dev: Adding in vim, cpio and htop
+# 1.1.2-dev: Adding in vim and emacs (This was failed image)
+# 1.1.1-dev: Adding in jupyterlab-system-monitor extension
 # 1.1.0-dev: Adding in tree and cmake, updating JH and JL, Python and R
 # 1.0.5: Adding r-tidyverse
 # 1.0.4: Adding in following libraries: libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev

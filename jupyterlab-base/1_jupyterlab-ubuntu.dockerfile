@@ -37,10 +37,12 @@ RUN apt-get update --yes && \
     curl \
     nano-tiny \
     unzip \
-    vim-tiny \
+    vim \
     openssh-client \
     tree \
     cmake \
+    htop \
+    cpio \
     less \
     texlive-xetex \
     texlive-fonts-recommended \
@@ -48,6 +50,16 @@ RUN apt-get update --yes && \
     ca-certificates \
     locales \
     sudo \
+    zlib1g-dev \
+    default-jre \
+    default-jdk \
+    dnsutils \
+    libssl-dev \
+    libbz2-dev \
+    libncurses5-dev \
+    liblzma-dev \
+    libcurl4-openssl-dev \
+    screen \
     # - tini is installed as a helpful container entrypoint that reaps zombie
     #   processes and such of the actual executable we want to start, see
     #   https://github.com/krallin/tini#why-tini for details.
@@ -199,7 +211,9 @@ RUN mamba install --yes \
 ENV JUPYTER_PORT=8888
 EXPOSE $JUPYTER_PORT
 
-RUN pip install nbresuse
+#RUN pip install nbresuse
+RUN pip install jupyterlab-topbar
+RUN pip install jupyterlab-system-monitor
 
 # Configure container startup
 CMD ["start-notebook.sh"]
