@@ -54,11 +54,12 @@ RUN apt-get update --yes && \
     default-jre \
     default-jdk \
     dnsutils \
-    libssl-dev \
+    #libssl-dev \
     libbz2-dev \
     libncurses5-dev \
     liblzma-dev \
-    libcurl4-openssl-dev \
+    #libcurl4-openssl-dev \
+    libtiff5-dev \
     screen \
     # - tini is installed as a helpful container entrypoint that reaps zombie
     #   processes and such of the actual executable we want to start, see

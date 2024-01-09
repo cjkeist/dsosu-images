@@ -1,7 +1,9 @@
-# TARGET jupyterlab-ubuntu-base v1.1.4-dev
-# TARGET jupyterlab-ubuntu-base-scipy v1.1.4-dev
-# TARGET jupyterlab-ubuntu-base-scipy-rjulia v1.1.4-dev
+# TARGET jupyterlab-ubuntu-base v1.1.6-dev
+# TARGET jupyterlab-ubuntu-base-scipy v1.1.6-dev
+# TARGET jupyterlab-ubuntu-base-scipy-rjulia v1.1.6-dev
 
+# 1.1.5-dev: Adding gdal-config, libudunits2-dev, 'r-viridis', 'r-terra', 'r-sf', python nglview
+# 1.1.4: Stable
 # 1.1.4-dev: Adding in  zlib1g-dev  default-jre  default-jdk  dnsutils  libssl-dev  libbz2-dev  libncurses5-dev  liblzma-dev libcurl-dev
 # 1.1.3-dev: Adding in vim, cpio and htop
 # 1.1.2-dev: Adding in vim and emacs (This was failed image)
@@ -70,11 +72,12 @@ RUN apt-get update --yes && \
     default-jre \
     default-jdk \
     dnsutils \
-    libssl-dev \
+    #libssl-dev \
     libbz2-dev \
     libncurses5-dev \
     liblzma-dev \
-    libcurl4-openssl-dev \
+    #libcurl4-openssl-dev \
+    libtiff5-dev \
     screen \
     # - tini is installed as a helpful container entrypoint that reaps zombie
     #   processes and such of the actual executable we want to start, see
@@ -322,6 +325,7 @@ RUN mamba install --yes \
     'statsmodels' \
     'sympy' \
     'widgetsnbextension'\
+    'nglview' \
     'xlrd' && \
     mamba clean --all -f -y && \
     fix-permissions "${CONDA_DIR}" && \
@@ -395,6 +399,10 @@ RUN apt-get update --yes && \
     unixodbc \
     unixodbc-dev \
     r-cran-rodbc \
+    libgdal-dev \
+    gdal-bin \
+    libudunits2-dev \
+    libproj-dev \
     gfortran \
     gcc && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -424,6 +432,9 @@ RUN mamba install --yes \
     'r-rsqlite' \
     'r-shiny' \
     'r-tidymodels' \
+    'r-viridis' \
+    'r-terra' \
+    'r-sf' \
     'unixodbc' && \
     mamba clean --all -f -y && \
     fix-permissions "${CONDA_DIR}" && \
@@ -483,6 +494,11 @@ RUN apt-get update && \
 
 # Fix for devtools https://github.com/conda-forge/r-devtools-feedstock/issues/4
 RUN ln -s /bin/tar /bin/gtar
+RUN rm -f /usr/lib/x86_64-linux-gnu/libssl.so.3
+RUN rm -f /lib/x86_64-linux-gnu/libcrypto.so.3
+RUN ln -s /opt/conda/lib/libssl.so.3 /usr/lib/x86_64-linux-gnu/libssl.so.3
+RUN ln -s /opt/conda/lib/libcrypto.so.3 /lib/x86_64-linux-gnu/libcrypto.so.3
+#RUN jupyter labextension install @jupyterlab/server-proxy
 
 #IMAGE oneilsh/jupyterlab-ubuntu-scipy-rjulia
 #TAG v1.1.3

@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cat *.dockerfile > Dockerfile
-../../scripts/docker_chain_build.sh .
+../../dsosuk8s/scripts/docker_chain_build.sh .

@@ -36,6 +36,10 @@ RUN apt-get update --yes && \
     unixodbc \
     unixodbc-dev \
     r-cran-rodbc \
+    libgdal-dev \
+    gdal-bin \
+    libudunits2-dev \
+    libproj-dev \
     gfortran \
     gcc && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -65,6 +69,9 @@ RUN mamba install --yes \
     'r-rsqlite' \
     'r-shiny' \
     'r-tidymodels' \
+    'r-viridis' \
+    'r-terra' \
+    'r-sf' \
     'unixodbc' && \
     mamba clean --all -f -y && \
     fix-permissions "${CONDA_DIR}" && \
@@ -124,6 +131,12 @@ RUN apt-get update && \
 
 # Fix for devtools https://github.com/conda-forge/r-devtools-feedstock/issues/4
 RUN ln -s /bin/tar /bin/gtar
+# Below lines are a brute force hack to fix RStuido
+RUN rm -f /usr/lib/x86_64-linux-gnu/libssl.so.3
+RUN rm -f /lib/x86_64-linux-gnu/libcrypto.so.3
+RUN ln -s /opt/conda/lib/libssl.so.3 /usr/lib/x86_64-linux-gnu/libssl.so.3
+RUN ln -s /opt/conda/lib/libcrypto.so.3 /lib/x86_64-linux-gnu/libcrypto.so.3
+#RUN jupyter labextension install @jupyterlab/server-proxy
 
 #IMAGE oneilsh/jupyterlab-ubuntu-scipy-rjulia
 #TAG v1.1.3
