@@ -1,8 +1,9 @@
-# TARGET jupyterlab-ubuntu-base v1.1.6-dev
-# TARGET jupyterlab-ubuntu-base-scipy v1.1.6-dev
-# TARGET jupyterlab-ubuntu-base-scipy-rjulia v1.1.6-dev
+# TARGET jupyterlab-ubuntu-base v1.1.5
+# TARGET jupyterlab-ubuntu-base-scipy v1.1.5
+# TARGET jupyterlab-ubuntu-base-scipy-rjulia v1.1.5
 
-# 1.1.5-dev: Adding gdal-config, libudunits2-dev, 'r-viridis', 'r-terra', 'r-sf', python nglview
+# 1.1.5: Stable
+# 1.1.5-dev: Adding gdal-config, libudunits2-dev, 'r-viridis', 'r-terra', 'r-sf', nglview
 # 1.1.4: Stable
 # 1.1.4-dev: Adding in  zlib1g-dev  default-jre  default-jdk  dnsutils  libssl-dev  libbz2-dev  libncurses5-dev  liblzma-dev libcurl-dev
 # 1.1.3-dev: Adding in vim, cpio and htop

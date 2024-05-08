@@ -45,6 +45,7 @@ RUN mamba install --yes \
     'ipywidgets' \
     'jupyterlab-git' \
     'matplotlib-base' \
+    'nglview' \
     'numba' \
     'numexpr' \
     'openpyxl' \

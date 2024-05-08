@@ -1,8 +1,9 @@
-# TARGET jupyterlab-ubuntu-base v1.1.6-dev
-# TARGET jupyterlab-ubuntu-base-scipy v1.1.6-dev
-# TARGET jupyterlab-ubuntu-base-scipy-rjulia v1.1.6-dev
+# TARGET jupyterlab-ubuntu-base v1.1.5
+# TARGET jupyterlab-ubuntu-base-scipy v1.1.5
+# TARGET jupyterlab-ubuntu-base-scipy-rjulia v1.1.5
 
-# 1.1.5-dev: Adding gdal-config, libudunits2-dev, 'r-viridis', 'r-terra', 'r-sf', python nglview
+# 1.1.5: Stable
+# 1.1.5-dev: Adding gdal-config, libudunits2-dev, 'r-viridis', 'r-terra', 'r-sf', nglview
 # 1.1.4: Stable
 # 1.1.4-dev: Adding in  zlib1g-dev  default-jre  default-jdk  dnsutils  libssl-dev  libbz2-dev  libncurses5-dev  liblzma-dev libcurl-dev
 # 1.1.3-dev: Adding in vim, cpio and htop
@@ -494,6 +495,7 @@ RUN apt-get update && \
 
 # Fix for devtools https://github.com/conda-forge/r-devtools-feedstock/issues/4
 RUN ln -s /bin/tar /bin/gtar
+# Below lines are a brute force hack to fix RStuido
 RUN rm -f /usr/lib/x86_64-linux-gnu/libssl.so.3
 RUN rm -f /lib/x86_64-linux-gnu/libcrypto.so.3
 RUN ln -s /opt/conda/lib/libssl.so.3 /usr/lib/x86_64-linux-gnu/libssl.so.3
