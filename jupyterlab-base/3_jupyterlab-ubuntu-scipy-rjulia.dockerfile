@@ -48,7 +48,6 @@ RUN apt-get update --yes && \
 USER root
 
 # R packages including IRKernel which gets installed globally.
-# r-e1071: dependency of the caret R package
 RUN mamba install --yes \
     'r-base' \
     'r-caret' \
@@ -132,11 +131,8 @@ RUN apt-get update && \
 # Fix for devtools https://github.com/conda-forge/r-devtools-feedstock/issues/4
 RUN ln -s /bin/tar /bin/gtar
 # Below lines are a brute force hack to fix RStuido
-RUN rm -f /usr/lib/x86_64-linux-gnu/libssl.so.3
-RUN rm -f /lib/x86_64-linux-gnu/libcrypto.so.3
-RUN ln -s /opt/conda/lib/libssl.so.3 /usr/lib/x86_64-linux-gnu/libssl.so.3
-RUN ln -s /opt/conda/lib/libcrypto.so.3 /lib/x86_64-linux-gnu/libcrypto.so.3
-#RUN jupyter labextension install @jupyterlab/server-proxy
+RUN echo 'options(download.file.method = "wget")' | tee -a /etc/R/Rprofile.site
+RUN echo 'options(download.file.method = "wget")' | tee -a /opt/conda/lib/R/etc/Rprofile.site
 
 #IMAGE oneilsh/jupyterlab-ubuntu-scipy-rjulia
 #TAG v1.1.3

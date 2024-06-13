@@ -1,7 +1,8 @@
-# TARGET jupyterlab-ubuntu-base v1.1.5
-# TARGET jupyterlab-ubuntu-base-scipy v1.1.5
-# TARGET jupyterlab-ubuntu-base-scipy-rjulia v1.1.5
+# TARGET jupyterlab-ubuntu-base v1.1.6
+# TARGET jupyterlab-ubuntu-base-scipy v1.1.6
+# TARGET jupyterlab-ubuntu-base-scipy-rjulia v1.1.6
 
+# 1.1.6: Stable, fixed ssh/sft issue.
 # 1.1.5: Stable
 # 1.1.5-dev: Adding gdal-config, libudunits2-dev, 'r-viridis', 'r-terra', 'r-sf', nglview
 # 1.1.4: Stable

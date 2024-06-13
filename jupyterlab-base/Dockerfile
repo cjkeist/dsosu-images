@@ -1,7 +1,8 @@
-# TARGET jupyterlab-ubuntu-base v1.1.5
-# TARGET jupyterlab-ubuntu-base-scipy v1.1.5
-# TARGET jupyterlab-ubuntu-base-scipy-rjulia v1.1.5
+# TARGET jupyterlab-ubuntu-base v1.1.6
+# TARGET jupyterlab-ubuntu-base-scipy v1.1.6
+# TARGET jupyterlab-ubuntu-base-scipy-rjulia v1.1.6
 
+# 1.1.6: Stable, fixed ssh/sft issue.
 # 1.1.5: Stable
 # 1.1.5-dev: Adding gdal-config, libudunits2-dev, 'r-viridis', 'r-terra', 'r-sf', nglview
 # 1.1.4: Stable
@@ -77,7 +78,7 @@ RUN apt-get update --yes && \
     libbz2-dev \
     libncurses5-dev \
     liblzma-dev \
-    #libcurl4-openssl-dev \
+    libcurl4-openssl-dev \
     libtiff5-dev \
     screen \
     # - tini is installed as a helpful container entrypoint that reaps zombie
@@ -292,8 +293,8 @@ RUN apt-get update --yes && \
 USER ${NB_UID}
 
 # mamba downgrades these packages to previous major versions, which causes issues
-RUN echo 'jupyterlab >=4.0.4' >> "${CONDA_DIR}/conda-meta/pinned" && \
-    echo 'notebook >=7.0.2' >> "${CONDA_DIR}/conda-meta/pinned"
+#RUN echo 'jupyterlab >=4.0.4' >> "${CONDA_DIR}/conda-meta/pinned" && \
+#    echo 'notebook >=7.0.2' >> "${CONDA_DIR}/conda-meta/pinned"
 
 # Install Python 3 packages
 RUN mamba install --yes \
@@ -412,7 +413,6 @@ RUN apt-get update --yes && \
 USER root
 
 # R packages including IRKernel which gets installed globally.
-# r-e1071: dependency of the caret R package
 RUN mamba install --yes \
     'r-base' \
     'r-caret' \
@@ -496,11 +496,8 @@ RUN apt-get update && \
 # Fix for devtools https://github.com/conda-forge/r-devtools-feedstock/issues/4
 RUN ln -s /bin/tar /bin/gtar
 # Below lines are a brute force hack to fix RStuido
-RUN rm -f /usr/lib/x86_64-linux-gnu/libssl.so.3
-RUN rm -f /lib/x86_64-linux-gnu/libcrypto.so.3
-RUN ln -s /opt/conda/lib/libssl.so.3 /usr/lib/x86_64-linux-gnu/libssl.so.3
-RUN ln -s /opt/conda/lib/libcrypto.so.3 /lib/x86_64-linux-gnu/libcrypto.so.3
-#RUN jupyter labextension install @jupyterlab/server-proxy
+RUN echo 'options(download.file.method = "wget")' | tee -a /etc/R/Rprofile.site
+RUN echo 'options(download.file.method = "wget")' | tee -a /opt/conda/lib/R/etc/Rprofile.site
 
 #IMAGE oneilsh/jupyterlab-ubuntu-scipy-rjulia
 #TAG v1.1.3

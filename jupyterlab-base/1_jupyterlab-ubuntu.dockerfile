@@ -58,7 +58,7 @@ RUN apt-get update --yes && \
     libbz2-dev \
     libncurses5-dev \
     liblzma-dev \
-    #libcurl4-openssl-dev \
+    libcurl4-openssl-dev \
     libtiff5-dev \
     screen \
     # - tini is installed as a helpful container entrypoint that reaps zombie
