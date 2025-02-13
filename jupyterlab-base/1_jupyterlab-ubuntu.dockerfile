@@ -54,12 +54,17 @@ RUN apt-get update --yes && \
     default-jre \
     default-jdk \
     dnsutils \
-    #libssl-dev \
+    libfontconfig1-dev \
+    libharfbuzz-dev \
+    libfribidi-dev \
+    libssl-dev \
     libbz2-dev \
     libncurses5-dev \
     liblzma-dev \
     libcurl4-openssl-dev \
+    libxml2-dev \
     libtiff5-dev \
+    libopenblas-dev \
     screen \
     # - tini is installed as a helpful container entrypoint that reaps zombie
     #   processes and such of the actual executable we want to start, see
@@ -107,10 +112,12 @@ RUN echo "auth requisite pam_deny.so" >> /etc/pam.d/su && \
 USER ${NB_UID}
 
 # Pin python version here, or set it to "default"
-ARG PYTHON_VERSION=3.11
+#ARG PYTHON_VERSION=3.11
+ARG PYTHON_VERSION=default
 
 # Setup work directory for backward-compatibility
 RUN mkdir "/home/${NB_USER}/work" && \
+    mkdir -p "/home/jovyan/.mamba/pkgs" && \
     fix-permissions "/home/${NB_USER}"
 
 # Download and install Micromamba, and initialize Conda prefix.
@@ -147,7 +154,7 @@ RUN set -x && \
         'jupyter_core' && \
     rm micromamba && \
     # Pin major.minor version of python
-    mamba list python | grep '^python ' | tr -s ' ' | cut -d ' ' -f 1,2 >> "${CONDA_DIR}/conda-meta/pinned" && \
+    mamba list python | sed 's/^ *//' | grep '^python ' | tr -s ' ' | cut -d ' ' -f 1,2 >> "${CONDA_DIR}/conda-meta/pinned" && \
     mamba clean --all -f -y && \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"

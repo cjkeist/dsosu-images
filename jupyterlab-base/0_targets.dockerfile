@@ -1,7 +1,10 @@
-# TARGET jupyterlab-ubuntu-base v1.1.6
-# TARGET jupyterlab-ubuntu-base-scipy v1.1.6
-# TARGET jupyterlab-ubuntu-base-scipy-rjulia v1.1.6
+# TARGET jupyterlab-ubuntu-base v1.1.8
+# TARGET jupyterlab-ubuntu-base-scipy v1.1.8
+# TARGET jupyterlab-ubuntu-base-scipy-rjulia v1.1.8
 
+# 1.1.8  Added libs: libfontconfig1-dev for R tidyverse rendering
+# 1.1.7: Stable, fixed issue with openssl version with RStudio by swithc to apt install r packages instead of mamba,
+# added libopenblas
 # 1.1.6: Stable, fixed ssh/sft issue.
 # 1.1.5: Stable
 # 1.1.5-dev: Adding gdal-config, libudunits2-dev, 'r-viridis', 'r-terra', 'r-sf', nglview

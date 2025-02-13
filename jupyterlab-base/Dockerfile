@@ -1,7 +1,10 @@
-# TARGET jupyterlab-ubuntu-base v1.1.6
-# TARGET jupyterlab-ubuntu-base-scipy v1.1.6
-# TARGET jupyterlab-ubuntu-base-scipy-rjulia v1.1.6
+# TARGET jupyterlab-ubuntu-base v1.1.8
+# TARGET jupyterlab-ubuntu-base-scipy v1.1.8
+# TARGET jupyterlab-ubuntu-base-scipy-rjulia v1.1.8
 
+# 1.1.8  Added libs: libfontconfig1-dev for R tidyverse rendering
+# 1.1.7: Stable, fixed issue with openssl version with RStudio by swithc to apt install r packages instead of mamba,
+# added libopenblas
 # 1.1.6: Stable, fixed ssh/sft issue.
 # 1.1.5: Stable
 # 1.1.5-dev: Adding gdal-config, libudunits2-dev, 'r-viridis', 'r-terra', 'r-sf', nglview
@@ -74,12 +77,17 @@ RUN apt-get update --yes && \
     default-jre \
     default-jdk \
     dnsutils \
-    #libssl-dev \
+    libfontconfig1-dev \
+    libharfbuzz-dev \
+    libfribidi-dev \
+    libssl-dev \
     libbz2-dev \
     libncurses5-dev \
     liblzma-dev \
     libcurl4-openssl-dev \
+    libxml2-dev \
     libtiff5-dev \
+    libopenblas-dev \
     screen \
     # - tini is installed as a helpful container entrypoint that reaps zombie
     #   processes and such of the actual executable we want to start, see
@@ -127,10 +135,12 @@ RUN echo "auth requisite pam_deny.so" >> /etc/pam.d/su && \
 USER ${NB_UID}
 
 # Pin python version here, or set it to "default"
-ARG PYTHON_VERSION=3.11
+#ARG PYTHON_VERSION=3.11
+ARG PYTHON_VERSION=default
 
 # Setup work directory for backward-compatibility
 RUN mkdir "/home/${NB_USER}/work" && \
+    mkdir -p "/home/jovyan/.mamba/pkgs" && \
     fix-permissions "/home/${NB_USER}"
 
 # Download and install Micromamba, and initialize Conda prefix.
@@ -167,7 +177,7 @@ RUN set -x && \
         'jupyter_core' && \
     rm micromamba && \
     # Pin major.minor version of python
-    mamba list python | grep '^python ' | tr -s ' ' | cut -d ' ' -f 1,2 >> "${CONDA_DIR}/conda-meta/pinned" && \
+    mamba list python | sed 's/^ *//' | grep '^python ' | tr -s ' ' | cut -d ' ' -f 1,2 >> "${CONDA_DIR}/conda-meta/pinned" && \
     mamba clean --all -f -y && \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"
@@ -400,46 +410,47 @@ RUN apt-get update --yes && \
     fonts-dejavu \
     unixodbc \
     unixodbc-dev \
-    r-cran-rodbc \
     libgdal-dev \
     gdal-bin \
     libudunits2-dev \
     libproj-dev \
     gfortran \
+    gpg \
     gcc && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 #USER ${NB_UID}
 USER root
-
+RUN wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | gpg --dearmor -o /usr/share/keyrings/r-project.gpg
+RUN echo "deb [signed-by=/usr/share/keyrings/r-project.gpg] https://cloud.r-project.org/bin/linux/ubuntu jammy-cran40/" | sudo tee -a /etc/apt/sources.list.d/r-project.list
 # R packages including IRKernel which gets installed globally.
-RUN mamba install --yes \
-    'r-base' \
-    'r-caret' \
-    'r-crayon' \
-    'r-devtools' \
-    'r-e1071' \
-    'r-forecast' \
-    'r-hexbin' \
-    'r-htmltools' \
-    'r-htmlwidgets' \
-    'r-irkernel' \
-    'r-nycflights13' \
-    'r-randomforest' \
-    'r-rcurl' \
-    'r-tidyverse' \
-    'r-rmarkdown' \
-    'r-rodbc' \
-    'r-rsqlite' \
-    'r-shiny' \
-    'r-tidymodels' \
-    'r-viridis' \
-    'r-terra' \
-    'r-sf' \
-    'unixodbc' && \
-    mamba clean --all -f -y && \
-    fix-permissions "${CONDA_DIR}" && \
-    fix-permissions "/home/${NB_USER}"
+RUN apt-get update --yes && \
+    apt-get install --yes --no-install-recommends \
+    r-base \
+    r-base-dev \
+    r-cran-rodbc \
+    r-cran-caret \
+    r-cran-crayon \
+    r-cran-devtools \
+    r-cran-e1071 \
+    r-cran-forecast \
+    r-cran-hexbin \
+    r-cran-htmltools \
+    r-cran-htmlwidgets \
+    r-cran-irkernel \
+    r-cran-randomforest \
+    r-cran-tidyverse \
+    r-cran-rmarkdown \
+    r-cran-rodbc \
+    r-cran-rsqlite \
+    r-cran-shiny \
+    r-cran-viridis \
+    r-cran-terra \
+    r-cran-sf \
+    unixodbc && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+    #fix-permissions "${CONDA_DIR}" && \
+    #fix-permissions "/home/${NB_USER}"
 
 # Rstudio - based on https://github.com/jupyterhub/jupyter-server-proxy/blob/master/contrib/rstudio/Dockerfile
 RUN apt-get update && \
@@ -496,13 +507,13 @@ RUN apt-get update && \
 # Fix for devtools https://github.com/conda-forge/r-devtools-feedstock/issues/4
 RUN ln -s /bin/tar /bin/gtar
 # Below lines are a brute force hack to fix RStuido
-RUN echo 'options(download.file.method = "wget")' | tee -a /etc/R/Rprofile.site
-RUN echo 'options(download.file.method = "wget")' | tee -a /opt/conda/lib/R/etc/Rprofile.site
+#RUN echo 'options(download.file.method = "wget")' | tee -a /etc/R/Rprofile.site
+#RUN echo 'options(download.file.method = "wget")' | tee -a /opt/conda/lib/R/etc/Rprofile.site
 
 #IMAGE oneilsh/jupyterlab-ubuntu-scipy-rjulia
 #TAG v1.1.3
 # changelog:
-# 1.1.3: more libs; libbz2-dev, liblzma, libcurl4, libssl
+# 1.1.3: more libs; libbz2-dev, liblzma, libssl
 # 1.1.2: added zlib1g-dev and ncurses dev libraries
 # 1.1.1: upgrade sudo to address root exploit https://ubuntu.com/security/notices/USN-4705-1
 
