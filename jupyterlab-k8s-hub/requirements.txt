@@ -62,7 +62,7 @@ jsonschema==4.16.0
     #   oauthenticator
 jupyter-telemetry==0.1.0
     # via jupyterhub
-jupyterhub==3.0.0
+jupyterhub==4.1.6
     # via
     #   -r requirements.in
     #   jupyterhub-firstuseauthenticator

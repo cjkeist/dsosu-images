@@ -12,22 +12,11 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 USER root
 
-RUN apt-get update --yes && \
-    apt-get install --yes --no-install-recommends \
-    # for cython: https://cython.readthedocs.io/en/latest/src/quickstart/install.html
-    build-essential \
-    # for latex labels
-    cm-super \
-    dvipng \
-    # for matplotlib anim
-    ffmpeg && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
-USER ${NB_UID}
-
 # mamba downgrades these packages to previous major versions, which causes issues
 #RUN echo 'jupyterlab >=4.0.4' >> "${CONDA_DIR}/conda-meta/pinned" && \
 #    echo 'notebook >=7.0.2' >> "${CONDA_DIR}/conda-meta/pinned"
+
+USER ${NB_UID}
 
 # Install Python 3 packages
 RUN mamba install --yes \
@@ -50,6 +39,7 @@ RUN mamba install --yes \
     'openpyxl' \
     'pandas' \
     'patsy' \
+    'plotly' \
     'protobuf' \
     'pytables' \
     'scikit-image' \
@@ -80,7 +70,6 @@ ENV XDG_CACHE_HOME="/home/${NB_USER}/.cache/"
 RUN MPLBACKEND=Agg python -c "import matplotlib.pyplot" && \
     fix-permissions "/home/${NB_USER}"
 
-#USER ${NB_UID}
 USER root
 
 WORKDIR "${HOME}"

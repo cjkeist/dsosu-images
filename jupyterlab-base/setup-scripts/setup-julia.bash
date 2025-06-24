@@ -1,21 +1,21 @@
 #!/bin/bash
 set -exuo pipefail
+
 # Requirements:
 # - Run as the root user
 # - The JULIA_PKGDIR environment variable is set
 
 # Default julia version to install if env var is not set
-# Check https://julialang.org/downloads/
-JULIA_VERSION="${JULIA_VERSION:-1.9.3}"
+JULIA_VERSION="${JULIA_VERSION:-1.11.5}"
 
-# Figure out what architecture we are installing in
+# Determine architecture
 JULIA_ARCH=$(uname -m)
 JULIA_SHORT_ARCH="${JULIA_ARCH}"
 if [ "${JULIA_SHORT_ARCH}" == "x86_64" ]; then
     JULIA_SHORT_ARCH="x64"
 fi
 
-# Figure out Julia Installer URL
+# Construct Julia installer URL
 JULIA_INSTALLER="julia-${JULIA_VERSION}-linux-${JULIA_ARCH}.tar.gz"
 JULIA_MAJOR_MINOR=$(echo "${JULIA_VERSION}" | cut -d. -f 1,2)
 
@@ -27,14 +27,15 @@ curl --progress-bar --location --output "${JULIA_INSTALLER}" \
 tar xzf "${JULIA_INSTALLER}" -C "/opt/julia-${JULIA_VERSION}" --strip-components=1
 rm "${JULIA_INSTALLER}"
 
-# Link Julia installed version to /usr/local/bin, so julia launches it
+# Symlink Julia binary
 ln -fs /opt/julia-*/bin/julia /usr/local/bin/julia
 
-# Tell Julia where conda libraries are
+# Add Conda lib path to Julia's DL_LOAD_PATH
 mkdir -p /etc/julia
 echo "push!(Libdl.DL_LOAD_PATH, \"${CONDA_DIR}/lib\")" >> /etc/julia/juliarc.jl
 
-# Create JULIA_PKGDIR, where user libraries are installed
-mkdir "${JULIA_PKGDIR}"
-chown "${NB_USER}" "${JULIA_PKGDIR}"
+# Create JULIA_PKGDIR and set permissions
+mkdir -p "${JULIA_PKGDIR}"
+chown -R "${NB_USER}:${NB_GID}" "${JULIA_PKGDIR}"
 fix-permissions "${JULIA_PKGDIR}"
+

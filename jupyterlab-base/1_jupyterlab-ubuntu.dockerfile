@@ -1,6 +1,6 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-ARG ROOT_CONTAINER=ubuntu:latest
+ARG ROOT_CONTAINER=ubuntu:22.04
 FROM $ROOT_CONTAINER as jupyterlab-ubuntu-base
 ############################################################################
 #################### Dependency: jupyter/base-image ########################
@@ -14,7 +14,7 @@ FROM $ROOT_CONTAINER as jupyterlab-ubuntu-base
 
 LABEL maintainer="Jupyter Project <jupyter@googlegroups.com>"
 ARG NB_USER="jovyan"
-ARG NB_UID="1000"
+ARG NB_UID="1001"
 ARG NB_GID="100"
 
 # Fix: https://github.com/hadolint/hadolint/wiki/DL4006
@@ -31,13 +31,15 @@ RUN apt-get update --yes && \
     #   the ubuntu base image is rebuilt too seldom sometimes (less than once a month)
     apt-get upgrade --yes && \
     apt-get install --yes --no-install-recommends \
-    # - bzip2 is necessary to extract the micromamba executable.
+    build-essential \
     bzip2 \
     git \
     curl \
     nano-tiny \
     unzip \
     vim \
+    emacs \
+    emacs-common \
     openssh-client \
     tree \
     cmake \
@@ -59,18 +61,40 @@ RUN apt-get update --yes && \
     libfribidi-dev \
     libssl-dev \
     libbz2-dev \
+    libvcflib-tools \
     libncurses5-dev \
     liblzma-dev \
     libcurl4-openssl-dev \
     libxml2-dev \
     libtiff5-dev \
     libopenblas-dev \
+    libgsl-dev \
     screen \
     # - tini is installed as a helpful container entrypoint that reaps zombie
     #   processes and such of the actual executable we want to start, see
     #   https://github.com/krallin/tini#why-tini for details.
     tini \
-    wget && \
+    wget \
+    # Add packages needed for later stages to avoid reinstallation
+    fonts-dejavu \
+    fonts-liberation \
+    pandoc \
+    run-one \
+    # NFS tools for shared storage
+    nfs-common \
+    nfs-kernel-server \
+    # Install packages needed for R and RStudio later
+    gfortran \
+    gcc \
+    unixodbc \
+    unixodbc-dev \
+    libgdal-dev \
+    gdal-bin \
+    libudunits2-dev \
+    libproj-dev \
+    software-properties-common \
+    dirmngr \
+    gnupg2 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
     locale-gen
@@ -113,7 +137,7 @@ USER ${NB_UID}
 
 # Pin python version here, or set it to "default"
 #ARG PYTHON_VERSION=3.11
-ARG PYTHON_VERSION=default
+ARG PYTHON_VERSION=3.12
 
 # Setup work directory for backward-compatibility
 RUN mkdir "/home/${NB_USER}/work" && \
@@ -172,26 +196,18 @@ USER root
 RUN mkdir /usr/local/bin/start-notebook.d && \
     mkdir /usr/local/bin/before-notebook.d
 
-# Switch back to jovyan to avoid accidental container runs as root
-USER ${NB_UID}
+# Install Rust and Cargo in /usr/local, needed for jupyterlab-topbar
+ENV RUSTUP_HOME=/usr/local/rustup
+ENV CARGO_HOME=/usr/local/cargo
 
-WORKDIR "${HOME}"
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --profile minimal --no-modify-path
+RUN chown -R root:root /usr/local/cargo
+RUN chown -R root:root /usr/local/rustup
+RUN chmod -R 777 /usr/local/cargo
+ENV PATH="/usr/local/cargo/bin:${PATH}"
+ENV PATH="/usr/local/rustup/bin:${PATH}"
 
-USER root
-
-# Install all OS dependencies for Server that starts but lacks all
-# features (e.g., download as all possible file formats)
-RUN apt-get update --yes && \
-    apt-get install --yes --no-install-recommends \
-    fonts-liberation \
-    # - pandoc is used to convert notebooks to html files
-    #   it's not present in aarch64 ubuntu image, so we install it here
-    pandoc \
-    # - run-one - a wrapper script that runs no more
-    #   than one unique  instance  of  some  command with a unique set of arguments,
-    #   we use `run-one-constantly` to support `RESTARTABLE` option
-    run-one && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+#RUN rustup default stable
 
 USER ${NB_UID}
 
@@ -206,8 +222,7 @@ RUN mamba install --yes \
     'jupyterlab' \
     'notebook' \
     'jupyterhub' \
-    'jupyter-resource-usage' \
-    'nbclassic' && \
+    'jupyter-resource-usage' && \
     jupyter server --generate-config && \
     mamba clean --all -f -y && \
     npm cache clean --force && \
@@ -220,8 +235,7 @@ ENV JUPYTER_PORT=8888
 EXPOSE $JUPYTER_PORT
 
 #RUN pip install nbresuse
-RUN pip install jupyterlab-topbar
-RUN pip install jupyterlab-system-monitor
+RUN pip install jupyterlab-topbar jupyterlab-system-monitor
 
 # Configure container startup
 CMD ["start-notebook.sh"]
@@ -233,13 +247,6 @@ COPY jupyter_notebook_config.py docker_healthcheck.py /etc/jupyter/
 # Fix permissions on /etc/jupyter as root
 USER root
 RUN fix-permissions /etc/jupyter/
-
-# nfs tools
-RUN apt-get update \
- && apt-get install -yq --no-install-recommends \
-    nfs-common \
-    nfs-kernel-server \
- && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # HEALTHCHECK documentation: https://docs.docker.com/engine/reference/builder/#healthcheck
 # This healtcheck works well for `lab`, `notebook`, `nbclassic`, `server` and `retro` jupyter commands

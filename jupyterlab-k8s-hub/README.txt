@@ -1,5 +1,7 @@
+This is based on https://github.com/jupyterhub/zero-to-jupyterhub-k8s
 Build Do:
-    DOCKER_BUILDKIT=1 docker build -t cjkeist/jupyterlab-k8s-hub:v1.7.0 .
+    docker build -t jupyterlab-k8s-hub:v1.7.2 .
+    docker tag jupyterlab-k8s-hub:v1.7.2 cjkeist/jupyterlab-k8s-hub:v1.7.2
 Then login to docker hub:
     docker login
-    docker push cjkeist/jupyterlab-k8s-hub:v1.7.0
+    docker push cjkeist/jupyterlab-k8s-hub:v1.7.2

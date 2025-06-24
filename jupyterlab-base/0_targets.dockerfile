@@ -1,7 +1,8 @@
-# TARGET jupyterlab-ubuntu-base v1.1.8
-# TARGET jupyterlab-ubuntu-base-scipy v1.1.8
-# TARGET jupyterlab-ubuntu-base-scipy-rjulia v1.1.8
+# TARGET jupyterlab-ubuntu-base v1.1.9
+# TARGET jupyterlab-ubuntu-base-scipy v1.1.9
+# TARGET jupyterlab-ubuntu-base-scipy-rjulia v1.1.9
 
+# 1.1.9  Basic upgrade and installed emacs, Rust, removed Pluto and Julia notebook(not working)
 # 1.1.8  Added libs: libfontconfig1-dev for R tidyverse rendering
 # 1.1.7: Stable, fixed issue with openssl version with RStudio by swithc to apt install r packages instead of mamba,
 # added libopenblas
