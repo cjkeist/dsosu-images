@@ -41,7 +41,8 @@ RUN --mount=type=cache,target=${PIP_CACHE_DIR} \
     py-spy \
     pycurl \
     jupyterhub==4.1.6 \
-    jupyterhub-kubespawner
+    jupyterhub-kubespawner \
+    jupyterhub-idle-culler==1.2.1
 
 WORKDIR /srv/jupyterhub
 RUN chown ${NB_USER}:${NB_USER} /srv/jupyterhub
@@ -66,7 +67,9 @@ RUN pip3 install .
 # Install LTIAuthenticator
 WORKDIR /root
 RUN pip3 install jupyterhub-ltiauthenticator
-RUN pip3 install git+https://github.com/oneilsh/ltiauthenticator.git@multi-key
+#RUN pip3 install git+https://github.com/oneilsh/ltiauthenticator.git@multi-key
+COPY jupyterhub_ltiauthenticator-0.4.1.dev0-py3-none-any.whl /root/
+RUN pip3 install /root/jupyterhub_ltiauthenticator-0.4.1.dev0-py3-none-any.whl
 
 WORKDIR /srv/jupyterhub
 
