@@ -1,4 +1,4 @@
-FROM jupyterlab-ubuntu-base-nvidia-scipy-rjulia as jupyterlab-ubuntu-base-nvidia-scipy-rjulia-gpu
+FROM jupyterlab-ubuntu-base-nvidia-scipy-rjulia AS jupyterlab-ubuntu-base-nvidia-scipy-rjulia-gpu
 ############################################################################
 ########################## Dependency: gpulibs #############################
 ############################################################################

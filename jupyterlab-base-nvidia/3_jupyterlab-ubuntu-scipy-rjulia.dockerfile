@@ -1,4 +1,4 @@
-FROM jupyterlab-ubuntu-base-nvidia-scipy as jupyterlab-ubuntu-base-nvidia-scipy-rjulia
+FROM jupyterlab-ubuntu-base-nvidia-scipy AS jupyterlab-ubuntu-base-nvidia-scipy-rjulia
 
 ############################################################################
 ################ Dependency: jupyter/datascience-notebook ##################
@@ -42,6 +42,10 @@ RUN apt-get update --yes && \
     libapparmor1 \
     libclang-dev \
     libedit2 \
+    libuv1-dev \
+    libfontconfig1-dev \
+    libfreetype6-dev \
+    unixodbc-dev \
     lsb-release \
     psmisc \
     libpq-dev \
@@ -50,20 +54,30 @@ RUN apt-get update --yes && \
 
 # Install IRkernel in R
 RUN R -e "install.packages('IRkernel', repos='https://cloud.r-project.org/')" \
-    && R -e "IRkernel::installspec(user = FALSE)"
+  && R -e "IRkernel::installspec(user = FALSE)" \
+  && python3 -c "import json; p='/usr/local/share/jupyter/kernels/ir/kernel.json'; \
+  k=json.load(open(p)); \
+  k.setdefault('env', {})['R_LIBS_SITE'] = '/usr/local/lib/R/site-library:/usr/lib/R/site-library'; \
+  json.dump(k, open(p, 'w'), indent=2)"
 
 # Install R packages
-RUN R -e "install.packages(c('rodbc', 'caret', 'crayon', 'devtools', 'e1071', 'forecast', 'hexbin', 'htmltools', 'htmlwidgets', 'randomForest', 'tidyverse', 'rmarkdown', 'RSQLite', 'shiny', 'viridis', 'terra', 'sf'), repos='http://cran.rstudio.com/')"
+RUN R -e "\
+  options(warn=1); \
+  pkgs <- c('digest','RODBC','caret','crayon','devtools','e1071','forecast','hexbin','htmltools','htmlwidgets','randomForest','tidyverse','rmarkdown','RSQLite','shiny','viridis','terra','sf'); \
+  install.packages(pkgs, repos='http://cran.rstudio.com/'); \
+  missing <- pkgs[!(pkgs %in% installed.packages()[,'Package'])]; \
+  if (length(missing) > 0) stop(paste('R packages failed to install:', paste(missing, collapse=', ')))"
 
 # You can use rsession from rstudio's desktop package as well.
-ENV RSTUDIO_PKG=rstudio-server-2024.12.1-563-amd64.deb
+# https://posit.co/downloads
+ENV RSTUDIO_PKG=rstudio-server-2026.04.0-526-amd64.deb
 ENV RSTUDIO_URL=https://download2.rstudio.org/server/jammy/amd64
 RUN wget -q ${RSTUDIO_URL}/${RSTUDIO_PKG} && \
     dpkg -i ${RSTUDIO_PKG} && \
     rm ${RSTUDIO_PKG}
 
 # Shiny
-ENV SHINY_PKG=shiny-server-1.5.23.1030-amd64.deb
+ENV SHINY_PKG=shiny-server-1.5.24.1035-amd64.deb
 ENV SHINY_URL=https://download3.rstudio.org/ubuntu-20.04/x86_64
 RUN wget -q ${SHINY_URL}/${SHINY_PKG} && \
     dpkg -i ${SHINY_PKG} && \

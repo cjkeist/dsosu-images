@@ -1,4 +1,4 @@
-FROM jupyterlab-ubuntu-base-nvidia as jupyterlab-ubuntu-base-nvidia-scipy
+FROM jupyterlab-ubuntu-base-nvidia AS jupyterlab-ubuntu-base-nvidia-scipy
 
 ############################################################################
 ################# Dependency: jupyter/scipy-notebook #######################

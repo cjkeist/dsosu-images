@@ -1,7 +1,7 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 ARG ROOT_CONTAINER=nvidia/cuda:12.8.1-cudnn-devel-ubuntu22.04
-FROM $ROOT_CONTAINER as jupyterlab-ubuntu-base-nvidia
+FROM $ROOT_CONTAINER AS jupyterlab-ubuntu-base-nvidia
 ############################################################################
 #################### Dependency: jupyter/base-image ########################
 ############################################################################
@@ -25,7 +25,7 @@ USER root
 
 # Install all OS dependencies for Server that starts
 # but lacks all features (e.g., download as all possible file formats)
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update --yes && \
     # - apt-get upgrade is run to patch known vulnerabilities in apt-get packages as
     #   the ubuntu base image is rebuilt too seldom sometimes (less than once a month)
@@ -68,6 +68,7 @@ RUN apt-get update --yes && \
     libxml2-dev \
     libtiff5-dev \
     libopenblas-dev \
+    libgsl-dev \
     screen \
     # - tini is installed as a helpful container entrypoint that reaps zombie
     #   processes and such of the actual executable we want to start, see

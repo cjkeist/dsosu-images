@@ -1,7 +1,7 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 ARG ROOT_CONTAINER=ubuntu:22.04
-FROM $ROOT_CONTAINER as jupyterlab-ubuntu-base
+FROM $ROOT_CONTAINER AS jupyterlab-ubuntu-base
 ############################################################################
 #################### Dependency: jupyter/base-image ########################
 ############################################################################
@@ -25,7 +25,7 @@ USER root
 
 # Install all OS dependencies for Server that starts
 # but lacks all features (e.g., download as all possible file formats)
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update --yes && \
     # - apt-get upgrade is run to patch known vulnerabilities in apt-get packages as
     #   the ubuntu base image is rebuilt too seldom sometimes (less than once a month)
