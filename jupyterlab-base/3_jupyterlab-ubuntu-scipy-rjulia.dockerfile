@@ -51,12 +51,17 @@ RUN apt-get update --yes && \
     libxkbcommon-x11-0 && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Ensure /usr/local/lib/R/site-library is in .libPaths() even when the hub
+# injects R_LIBS_SITE=/home/.hub_local/R_libs (which otherwise replaces, not
+# extends, the default). Prepends the system site-lib while preserving the
+# hub's NFS user-lib path.
+RUN echo 'R_LIBS_SITE=/usr/local/lib/R/site-library:${R_LIBS_SITE}:/usr/lib/R/site-library' >> /etc/R/Renviron.site
+
 # Install IRkernel in R
 RUN R -e "install.packages('IRkernel', repos='https://cloud.r-project.org/')" \
   && R -e "IRkernel::installspec(user = FALSE)" \
   && python3 -c "import json; p='/usr/local/share/jupyter/kernels/ir/kernel.json'; \
   k=json.load(open(p)); \
-  k.setdefault('env', {})['R_LIBS_SITE'] = '/usr/local/lib/R/site-library:/usr/lib/R/site-library'; \
   json.dump(k, open(p, 'w'), indent=2)"
 
 # Install R packages

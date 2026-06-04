@@ -56,11 +56,16 @@ RUN apt-get update --yes && \
     default-jre \
     default-jdk \
     dnsutils \
+    libtool \
+    libxml-parser-perl \
+    libxml-simple-perl \
     libfontconfig1-dev \
     libharfbuzz-dev \
     libfribidi-dev \
     libssl-dev \
     libbz2-dev \
+    libpixman-1-dev \
+    libcairo2-dev \
     libvcflib-tools \
     libncurses5-dev \
     liblzma-dev \
